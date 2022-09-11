@@ -10,4 +10,4 @@ jobs:
         host: ssh-raraph84.alwaysdata.net
         username: raraph84_status_deploy
         password: ${{ secrets.SSH_PASSWORD }}
-        script: ~/deployWebsite.sh
+        script: ~/status/deployWebsite.sh
