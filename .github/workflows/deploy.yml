@@ -1,0 +1,13 @@
+name: Auto Déploiement
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run deploy command on ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ssh-raraph84.alwaysdata.net
+        username: raraph84_status_deploy
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: ~/deployWebsite.sh
