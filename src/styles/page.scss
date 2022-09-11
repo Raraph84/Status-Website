@@ -1,0 +1,111 @@
+.page {
+    .header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 60px;
+        font-size: 72px;
+
+        img {
+            max-width: 20vw;
+            max-height: 20vh;
+            min-width: 150px;
+            min-height: 150px;
+            margin-right: 35px;
+        }
+    }
+
+    .subPages {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 30px;
+        margin-bottom: 30px;
+
+        @media screen and (orientation: portrait) {
+            flex-direction: column;
+        }
+
+        .subPage {
+            display: flex;
+            align-items: center;
+            padding: 20px 45px;
+            border-radius: 15px;
+            background-color: #29435C;
+            font-size: 32px;
+
+            img {
+                height: 90px;
+                margin-right: 15px;
+            }
+        }
+    }
+
+    .nodes {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+
+        .node {
+            padding: 20px 45px;
+            border-radius: 15px;
+            background-color: #29435C;
+            font-size: 32px;
+
+            .title {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .uptime-title {
+                font-size: 24px;
+            }
+
+            .uptime {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 10px;
+
+                .day {
+                    position: relative;
+                    min-width: 0.75%;
+                    height: 40px;
+                    border-radius: 10px;
+                    cursor: pointer;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                        transition-property: background-color;
+                        transition-duration: 150ms;
+                    }
+
+                    &:hover::before {
+                        background-color: rgba(0, 0, 0, 0.25);
+                    }
+
+                    .tooltip {
+                        display: none;
+                        position: absolute;
+                        width: max-content;
+                        left: 50%;
+                        transform: translate(-50%, -110%);
+                        padding: 5px 10px;
+                        z-index: 1;
+                        border-radius: 5px;
+                        background-color: #152A38;
+                        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
+                        font-size: 16px;
+                    }
+
+                    &:hover .tooltip {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}
