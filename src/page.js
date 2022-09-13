@@ -73,9 +73,9 @@ class Node extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, days: null, daysShowed: 90 };
+        this.state = { requesting: false, info: null, days: null, displayedDays: 90 };
 
-        this.resizeHandler = () => this.setState({ daysShowed: window.innerWidth > window.innerHeight ? 90 : 30 });
+        this.updateDisplayedDays = () => this.setState({ displayedDays: window.innerWidth > window.innerHeight ? 90 : 30 });
     }
 
     componentDidMount() {
@@ -89,16 +89,17 @@ class Node extends Component {
             this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
         });
 
-        window.addEventListener("resize", this.resizeHandler);
+        this.updateDisplayedDays();
+        window.addEventListener("resize", this.updateDisplayedDays);
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.resizeHandler);
+        window.removeEventListener("resize", this.updateDisplayedDays);
     }
 
     render() {
 
-        const totalUptime = this.state.days ? Math.round(this.state.days.slice(-this.state.daysShowed).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.filter((day) => day.uptime !== -1).length * 100) / 100 : 0;
+        const totalUptime = this.state.days ? Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : 0;
 
         return <div className="node">
             <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id} className="title link-container" >
@@ -108,8 +109,8 @@ class Node extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
             {this.state.days ? <>
-                <div className="uptime-title">En ligne à {totalUptime}% ces {this.state.daysShowed} derniers jours :</div>
-                <div className="uptime">{this.state.days.slice(-this.state.daysShowed).map((day) =>
+                <div className="uptime-title">En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                <div className="uptime">{this.state.days.slice(-this.state.displayedDays).map((day) =>
                     <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
