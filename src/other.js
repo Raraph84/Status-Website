@@ -5,9 +5,9 @@ export class NotFound extends Component {
 
         document.title = "Page introuvable";
 
-        return <div>
-            <div style={{ fontSize: "50px" }}>Cette page n'existe pas !</div>
-            <div style={{ fontSize: "24px", fontStyle: "italic" }}>Ou pas encore</div>
+        return <div className="notfound">
+            <div className="title">Cette page n'existe pas !</div>
+            <div className="subtitle">Ou pas encore</div>
         </div>;
     }
 }
