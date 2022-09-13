@@ -2,9 +2,9 @@ import { Component } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { getNodeUptime, getPage } from "./api";
+import moment from "moment";
 
 import "./styles/page.scss";
-import moment from "moment";
 
 class PageClass extends Component {
 
@@ -18,7 +18,7 @@ class PageClass extends Component {
     componentDidMount() {
 
         this.setState({ requesting: true, info: null, page: null });
-        getPage(this.props.params.shortName).then((page) => {
+        getPage(this.props.params.pageShortName).then((page) => {
             this.setState({ requesting: false, page });
         }).catch((error) => {
             if (error === "This page does not exist")
@@ -50,7 +50,7 @@ class PageClass extends Component {
 
                 <div className="subPages">{this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} />)}</div>
 
-                <div className="nodes">{this.state.page.nodes.map((node) => <Node key={node.id} node={node} />)}</div>
+                <div className="nodes">{this.state.page.nodes.map((node) => <Node key={node.id} node={node} page={this.state.page} />)}</div>
 
             </> : null}
 
@@ -60,7 +60,7 @@ class PageClass extends Component {
 
 class SubPage extends Component {
     render() {
-        return <Link to={"/pages/" + this.props.subPage.shortName} className="subPage link-container">
+        return <Link to={"/" + this.props.subPage.shortName} className="subPage link-container">
             <img src={this.props.subPage.logoUrl} alt="Logo" />
             <span className="link">{this.props.subPage.title} ({this.props.subPage.onlineNodes}/{this.props.subPage.totalNodes})</span>
         </Link>;
@@ -93,7 +93,7 @@ class Node extends Component {
         const totalUptime = this.state.days ? Math.round(this.state.days.filter((day) => day.uptime !== -1).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.filter((day) => day.uptime !== -1).length * 100) / 100 : 0;
 
         return <div className="node">
-            <Link to={"/nodes/" + this.props.node.id} className="title link-container" >
+            <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id} className="title link-container" >
                 <span className="link">{this.props.node.name}</span>
                 <span>{this.props.node.online ? "En ligne" : "En panne"}</span>
             </Link>
@@ -102,12 +102,13 @@ class Node extends Component {
             {this.state.days ? <>
                 <div className="uptime-title">En ligne à {totalUptime}% ces trois dernier mois :</div>
                 <div className="uptime">{this.state.days.map((day) =>
-                    <div key={day.day} style={{ backgroundColor: (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
+                    <div key={day.day} style={{ backgroundColor: day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green") }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
                             <div>En ligne à {day.uptime}%</div>
                         </div>
-                    </div>)}</div>
+                    </div>
+                )}</div>
             </> : null}
         </div>;
     }
