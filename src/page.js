@@ -90,7 +90,7 @@ class Node extends Component {
 
     render() {
 
-        const totalUptime = this.state.days ? Math.round(this.state.days.filter((day) => day.uptime !== -1).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.filter((day) => day.uptime !== -1).length * 100) / 100 : 0;
+        const totalUptime = this.state.days ? Math.round(this.state.days.filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.filter((day) => day.uptime !== -1).length * 100) / 100 : 0;
 
         return <div className="node">
             <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id} className="title link-container" >
@@ -102,10 +102,10 @@ class Node extends Component {
             {this.state.days ? <>
                 <div className="uptime-title">En ligne à {totalUptime}% ces trois dernier mois :</div>
                 <div className="uptime">{this.state.days.map((day) =>
-                    <div key={day.day} style={{ backgroundColor: day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green") }} className="day">
+                    <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                            <div>En ligne à {day.uptime}%</div>
+                            {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune donnée</div>}
                         </div>
                     </div>
                 )}</div>
