@@ -50,7 +50,7 @@ class PageClass extends Component {
 
                 <div className="subPages">{this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} />)}</div>
 
-                <div className="nodes">{this.state.page.nodes.map((node) => <Node key={node.id} node={node} page={this.state.page} />)}</div>
+                <div className="nodes">{this.state.page.nodes.sort((a, b) => a.position - b.position).map((node) => <Node key={node.id} node={node} page={this.state.page} />)}</div>
 
             </> : null}
 
