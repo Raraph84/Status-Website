@@ -102,7 +102,7 @@ class Node extends Component {
         const totalUptime = this.state.days ? Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : 0;
 
         return <div className="node">
-            <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id} className="title link-container" >
+            <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id} className="title link-container">
                 <span className="link">{this.props.node.name}</span>
                 <span>{this.props.node.online ? "En ligne" : "En panne"}</span>
             </Link>

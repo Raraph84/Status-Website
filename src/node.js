@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Info, Loading } from "./other";
 import { getPage, getNode, getNodeUptime, getNodeResponseTimes } from "./api";
@@ -62,7 +62,10 @@ class NodeClass extends Component {
 
                 <div className="header">
                     <img src={this.state.page.logoUrl} alt="Logo" />
-                    <a href={this.state.page.url} className="link">{this.state.page.title}</a>
+                    <div className="links">
+                        <a href={this.state.page.url} className="link">{this.state.page.title}</a>
+                        <Link to={"/" + this.state.page.shortName} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>
+                    </div>
                 </div>
 
                 <div className="infos">
@@ -70,32 +73,70 @@ class NodeClass extends Component {
                         <span>{this.state.node.name}</span>
                         <span>{this.state.node.online ? "En ligne" : "En panne"}</span>
                     </div>
-                    <div className="uptime-title">En ligne à {Math.round(this.state.uptimes.filter((day) => day.uptime !== -1).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.filter((day) => day.uptime !== -1).length * 100) / 100}% ces trois dernier mois :</div>
+                    <div>En ligne à {Math.round(this.state.uptimes.filter((day) => day.uptime !== -1).reduce((acc, day) => acc + day.uptime, 0) / this.state.uptimes.filter((day) => day.uptime !== -1).length * 100) / 100}% ces trois dernier mois :</div>
                     <div className="uptime">{this.state.uptimes.map((day) =>
-                        <div key={day.day} style={{ backgroundColor: day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green") }} className="day">
+                        <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
                                 <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                                <div>En ligne à {day.uptime}%</div>
+                                {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune donnée</div>}
                             </div>
                         </div>
                     )}</div>
                 </div>
 
                 <div className="responseTime">
+                    <div>Temps de réponse de {Math.round(this.state.responseTimes.filter((day) => day.responseTime !== -1).reduce((acc, day) => acc + day.responseTime, 0) / this.state.uptimes.filter((day) => day.responseTime !== -1).length * 100) / 100}ms ces trois dernier mois :</div>
                     <Line data={{
-                        labels: this.state.responseTimes.map((responseTime) => responseTime.day),
+                        labels: this.state.responseTimes.map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
                         datasets: [{
                             label: "Temps de réponse",
-                            data: this.state.responseTimes.map((responseTime) => responseTime.responseTime),
-                            borderColor: "rgb(255, 150, 0)",
-                            backgroundColor: "rgba(255, 150, 0, 0.5)",
+                            data: this.state.responseTimes.map((responseTime) => responseTime.responseTime < 0 ? null : responseTime.responseTime),
+                            borderColor: "rgb(0, 175, 0)",
+                            backgroundColor: "rgba(0, 175, 0, 0.5)",
                             borderWidth: 1,
                             tension: 0.4
                         }]
                     }} options={{
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: (context) => context.parsed.y + "ms" } }
+                        },
                         scales: {
-                            x: { grid: { display: false } },
-                            y: { grid: { display: false } }
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: "Jours",
+                                    color: "rgb(255, 255, 255)",
+                                    font: { family: "Chillax" }
+                                },
+                                ticks: {
+                                    color: "rgb(255, 255, 255)",
+                                    font: { family: "Chillax" },
+                                    precision: 0
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "rgb(255, 255, 255)"
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: "Temps de réponse",
+                                    color: "rgb(255, 255, 255)",
+                                    font: { family: "Chillax" }
+                                },
+                                ticks: {
+                                    color: "rgb(255, 255, 255)",
+                                    font: { family: "Chillax" },
+                                    callback: (value) => value + "ms"
+                                },
+                                grid: {
+                                    display: false,
+                                    borderColor: "rgb(255, 255, 255)"
+                                },
+                                beginAtZero: true
+                            }
                         }
                     }} />
                 </div>

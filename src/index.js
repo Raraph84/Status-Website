@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from "chart.js";
 
 import Page from "./page";
-//import Node from "./node";
+import Node from "./node";
 import { NotFound } from "./other";
 
 import "./styles/common.scss";
@@ -16,7 +16,7 @@ class Website extends Component {
         return <BrowserRouter>
             <Routes>
                 <Route path="/:pageShortName" element={<Page />} />
-                {/* <Route path="/:pageShortName/:nodeId" element={<Node />} /> */}
+                <Route path="/:pageShortName/:nodeId" element={<Node />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>;
