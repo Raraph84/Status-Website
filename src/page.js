@@ -57,9 +57,13 @@ class PageClass extends Component {
                     </div>
                 </div>
 
-                <div className="subPages">{this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} back={back} />)}</div>
+                {this.state.page.subPages.length > 0 ? <div className="subPages">
+                    {this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} back={back} />)}
+                </div> : null}
 
-                <div className="nodes">{this.state.page.nodes.sort((a, b) => a.position - b.position).map((node) => <Node key={node.id} node={node} page={this.state.page} back={back} />)}</div>
+                {this.state.page.nodes.length > 0 ? <div className="nodes">
+                    {this.state.page.nodes.sort((a, b) => a.position - b.position).map((node) => <Node key={node.id} node={node} page={this.state.page} back={back} />)}
+                </div> : null}
 
             </> : null}
 
@@ -118,7 +122,7 @@ class Node extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
             {this.state.days ? <>
-                <div className="uptime-title">En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                <div>En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
                 <div className="uptime">{this.state.days.slice(-this.state.displayedDays).map((day) =>
                     <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
