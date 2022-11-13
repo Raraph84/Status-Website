@@ -52,7 +52,7 @@ class PageClass extends Component {
                 <div className="header">
                     <img src={this.state.page.logoUrl} alt="Logo" />
                     <div className="links">
-                        <a href={this.state.page.url} className="link">{this.state.page.title}</a>
+                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineNodes}/{this.state.page.totalNodes})</a>
                         {params.has("back") ? <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link> : null}
                     </div>
                 </div>
