@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Info, Loading } from "./other";
 import { getPage, getNode, getNodeUptime, getNodeResponseTimes } from "./api";
@@ -53,6 +53,8 @@ class NodeClass extends Component {
 
         document.title = this.state.node ? "Statut - " + this.state.node.name : "Statut - Chargement";
 
+        const params = new URLSearchParams(this.props.location.search);
+
         return <div className="node">
 
             {this.state.requesting ? <Loading /> : null}
@@ -64,7 +66,7 @@ class NodeClass extends Component {
                     <img src={this.state.page.logoUrl} alt="Logo" />
                     <div className="links">
                         <a href={this.state.page.url} className="link">{this.state.page.title}</a>
-                        <Link to={"/" + this.state.page.shortName} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>
+                        {params.has("back") ? <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link> : null}
                     </div>
                 </div>
 
@@ -148,4 +150,4 @@ class NodeClass extends Component {
 }
 
 // eslint-disable-next-line
-export default (props) => <NodeClass {...props} params={useParams()} />;
+export default (props) => <NodeClass {...props} params={useParams()} location={useLocation()} />;

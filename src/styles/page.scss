@@ -5,13 +5,28 @@
         align-items: center;
         gap: 20px 35px;
         margin-bottom: 60px;
-        font-size: 72px;
 
         img {
             max-width: 20vw;
             max-height: 20vh;
             min-width: 150px;
             min-height: 150px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 72px;
+
+            .back {
+                font-size: 32px;
+
+                i {
+                    margin-right: 10px;
+                }
+            }
         }
 
         @media screen and (orientation: portrait) {
