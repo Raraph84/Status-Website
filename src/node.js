@@ -13,7 +13,7 @@ class NodeClass extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, page: null, node: null, uptimes: null, responseTimes: null };
+        this.state = { requesting: false, info: null, page: null, node: null, uptimes: null, responseTimes: null, displayedDays: 90 };
     }
 
     componentDidMount() {
@@ -43,17 +43,31 @@ class NodeClass extends Component {
                 this.setState({ requesting: false, info: <Info>Cette page n'existe pas !</Info> });
             else this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
         });
+
+        this.updateDisplayedDays();
+        window.addEventListener("resize", this.updateDisplayedDays.bind(this));
     }
 
     componentDidUpdate(oldProps) {
         if (oldProps.params !== this.props.params) this.componentDidMount();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDisplayedDays.bind(this));
+    }
+
+    updateDisplayedDays() {
+        this.setState({ displayedDays: window.innerWidth < 768 ? 30 : (window.innerWidth < 992 ? 60 : 90) });
+    }
+
     render() {
 
         document.title = this.state.node ? "Statut - " + this.state.node.name : "Statut - Chargement";
+        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.png";
 
         const params = new URLSearchParams(this.props.location.search);
+
+        const totalUptime = this.state.uptimes ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : 0;
 
         return <div className="node">
 
@@ -75,8 +89,8 @@ class NodeClass extends Component {
                         <span>{this.state.node.name}</span>
                         <span>{this.state.node.online ? "En ligne" : "En panne"}</span>
                     </div>
-                    <div>En ligne à {Math.round(this.state.uptimes.filter((day) => day.uptime !== -1).reduce((acc, day) => acc + day.uptime, 0) / this.state.uptimes.filter((day) => day.uptime !== -1).length * 100) / 100}% ces trois dernier mois :</div>
-                    <div className="uptime">{this.state.uptimes.map((day) =>
+                    <div>En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                    <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
                         <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
                                 <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>

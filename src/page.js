@@ -87,8 +87,6 @@ class Node extends Component {
         super(props);
 
         this.state = { requesting: false, info: null, days: null, displayedDays: 90 };
-
-        this.updateDisplayedDays = () => this.setState({ displayedDays: window.innerWidth > window.innerHeight ? 90 : 30 });
     }
 
     componentDidMount() {
@@ -103,11 +101,15 @@ class Node extends Component {
         });
 
         this.updateDisplayedDays();
-        window.addEventListener("resize", this.updateDisplayedDays);
+        window.addEventListener("resize", this.updateDisplayedDays.bind(this));
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.updateDisplayedDays);
+        window.removeEventListener("resize", this.updateDisplayedDays.bind(this));
+    }
+
+    updateDisplayedDays() {
+        this.setState({ displayedDays: window.innerWidth < 768 ? 30 : (window.innerWidth < 992 ? 60 : 90) });
     }
 
     render() {
