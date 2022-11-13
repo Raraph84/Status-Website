@@ -67,8 +67,6 @@ class NodeClass extends Component {
 
         const params = new URLSearchParams(this.props.location.search);
 
-        const totalUptime = this.state.uptimes ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : 0;
-
         return <div className="node">
 
             {this.state.requesting ? <Loading /> : null}
@@ -89,7 +87,7 @@ class NodeClass extends Component {
                         <span>{this.state.node.name}</span>
                         <span>{this.state.node.online ? "En ligne" : "En panne"}</span>
                     </div>
-                    <div>En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                    <div>En ligne à {Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100}% ces {this.state.displayedDays} derniers jours :</div>
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
                         <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
@@ -101,12 +99,12 @@ class NodeClass extends Component {
                 </div>
 
                 <div className="responseTime">
-                    <div>Temps de réponse de {Math.round(this.state.responseTimes.filter((day) => day.responseTime !== -1).reduce((acc, day) => acc + day.responseTime, 0) / this.state.uptimes.filter((day) => day.responseTime !== -1).length * 100) / 100}ms ces trois dernier mois :</div>
+                    <div>Temps de réponse de {Math.round(this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime !== -1).reduce((acc, day) => acc + day.responseTime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.responseTime !== -1).length * 100) / 100}ms ces {this.state.displayedDays} derniers jours :</div>
                     <Line data={{
-                        labels: this.state.responseTimes.map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
+                        labels: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
                         datasets: [{
                             label: "Temps de réponse",
-                            data: this.state.responseTimes.map((responseTime) => responseTime.responseTime < 0 ? null : responseTime.responseTime),
+                            data: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => responseTime.responseTime < 0 ? null : responseTime.responseTime),
                             borderColor: "rgb(0, 175, 0)",
                             backgroundColor: "rgba(0, 175, 0, 0.5)",
                             borderWidth: 1,
@@ -143,6 +141,7 @@ class NodeClass extends Component {
                                     font: { family: "Chillax" }
                                 },
                                 ticks: {
+                                    display: window.innerWidth >= 768,
                                     color: "rgb(255, 255, 255)",
                                     font: { family: "Chillax" },
                                     callback: (value) => value + "ms"

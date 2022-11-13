@@ -114,8 +114,6 @@ class Node extends Component {
 
     render() {
 
-        const totalUptime = this.state.days ? Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : 0;
-
         return <div className="node">
             <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id + this.props.back} className="title link-container">
                 <span className="link">{this.props.node.name}</span>
@@ -124,7 +122,7 @@ class Node extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
             {this.state.days ? <>
-                <div>En ligne à {totalUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                <div>En ligne à {Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100}% ces {this.state.displayedDays} derniers jours :</div>
                 <div className="uptime">{this.state.days.slice(-this.state.displayedDays).map((day) =>
                     <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
