@@ -34,7 +34,7 @@ class PageClass extends Component {
     render() {
 
         document.title = this.state.page ? "Statut - " + this.state.page.title : "Statut - Chargement";
-        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.png";
+        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.ico";
 
         const backParams = new URLSearchParams();
         backParams.set("back", this.props.location.pathname + this.props.location.search);

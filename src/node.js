@@ -63,7 +63,7 @@ class NodeClass extends Component {
     render() {
 
         document.title = this.state.node ? "Statut - " + this.state.node.name : "Statut - Chargement";
-        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.png";
+        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.ico";
 
         const params = new URLSearchParams(this.props.location.search);
 
