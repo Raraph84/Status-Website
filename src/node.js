@@ -67,8 +67,8 @@ class NodeClass extends Component {
 
         const params = new URLSearchParams(this.props.location.search);
 
-        const averageUptime = this.state.uptimes ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
-        const averageResponseTime = this.state.responseTimes ? Math.round(this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).reduce((acc, day) => acc + day.responseTime, 0) / this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length * 100) / 100 : -1;
+        const averageUptime = this.state.uptimes && this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length > 0 ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
+        const averageResponseTime = this.state.responseTimes && this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length > 0 ? Math.round(this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).reduce((acc, day) => acc + day.responseTime, 0) / this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length * 100) / 100 : -1;
 
         return <div className="node">
 
@@ -88,21 +88,21 @@ class NodeClass extends Component {
                 <div className="infos">
                     <div className="title">
                         <span>{this.state.node.name}</span>
-                        <span>{this.state.node.online ? "En ligne" : "En panne"}</span>
+                        <span>{this.state.node.disabled ? "Désactivé" : (this.state.node.online ? "En ligne" : "En panne")}</span>
                     </div>
-                    <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div>
+                    {averageUptime >= 0 ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
                         <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
                                 <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                                {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune donnée</div>}
+                                {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
                             </div>
                         </div>
                     )}</div>
                 </div>
 
                 <div className="responseTime">
-                    <div>Temps de réponse de {averageResponseTime}ms ces {this.state.displayedDays} derniers jours :</div>
+                    {averageResponseTime >= 0 ? <div>Temps de réponse de {averageResponseTime}ms ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données de temps de réponse ces {this.state.displayedDays} derniers jours :</div>}
                     <Line data={{
                         labels: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
                         datasets: [{
