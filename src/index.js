@@ -15,6 +15,7 @@ class Website extends Component {
     render() {
         return <BrowserRouter>
             <Routes>
+                <Route path="/" element={<Page />} />
                 <Route path="/:pageShortName" element={<Page />} />
                 <Route path="/:pageShortName/:nodeId" element={<Node />} />
                 <Route path="*" element={<NotFound />} />

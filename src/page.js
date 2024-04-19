@@ -18,7 +18,7 @@ class PageClass extends Component {
     componentDidMount() {
 
         this.setState({ requesting: true, info: null, page: null });
-        getPage(this.props.params.pageShortName).then((page) => {
+        getPage(this.props.params.pageShortName || window.location.hostname).then((page) => {
             this.setState({ requesting: false, page });
         }).catch((error) => {
             if (error === "This page does not exist")
@@ -33,8 +33,10 @@ class PageClass extends Component {
 
     render() {
 
-        document.title = this.state.page ? "Statut - " + this.state.page.title : "Statut - Chargement";
-        document.getElementById("favicon").href = this.state.page ? this.state.page.logoUrl : "/favicon.ico";
+        if (this.state.page) {
+            document.title = "Statut - " + this.state.page.title;
+            document.getElementById("favicon").href = this.state.page.logoUrl;
+        }
 
         const backParams = new URLSearchParams();
         backParams.set("back", this.props.location.pathname + this.props.location.search);
