@@ -120,7 +120,7 @@ class Node extends Component {
 
         return <div className="node">
             <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id + this.props.back} className="title link-container">
-                <span className="link">{this.props.node.name}</span>
+                <span className="link">{this.props.node.displayName || this.props.node.name}</span>
                 <span>{this.props.node.disabled ? "Désactivé" : (this.props.node.online ? "En ligne" : "En panne")}</span>
             </Link>
             {this.state.requesting ? <Loading /> : null}

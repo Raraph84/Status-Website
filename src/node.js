@@ -89,7 +89,7 @@ class NodeClass extends Component {
 
                 <div className="infos">
                     <div className="title">
-                        <span>{this.state.node.name}</span>
+                        <span>{this.state.page.nodes.find((node) => node.id === this.state.node.id)?.displayName || this.state.node.name}</span>
                         <span>{this.state.node.disabled ? "Désactivé" : (this.state.node.online ? "En ligne" : "En panne")}</span>
                     </div>
                     {averageUptime >= 0 ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
