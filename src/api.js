@@ -1,4 +1,4 @@
-const HOST = process.env.NODE_ENV === "production" ? "https://api.status.raraph.fr" : "http://" + document.location.hostname + ":8080";
+const HOST = process.env.NODE_ENV === "production" ? "https://api.status.polycube.fr" : "http://" + document.location.hostname + ":8080";
 
 export const getNode = async (id) => new Promise((resolve, reject) => {
 
