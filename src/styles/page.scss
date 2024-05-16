@@ -71,12 +71,12 @@
         }
     }
 
-    .nodes {
+    .services {
         display: flex;
         flex-direction: column;
         gap: 30px;
 
-        .node {
+        .service {
             padding: 20px 45px;
             border-radius: 15px;
             background-color: #29435C;

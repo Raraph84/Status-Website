@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { Info, Loading } from "./other";
-import { getNodeUptime, getPage } from "./api";
+import { getServiceUptimes, getPage } from "./api";
 import moment from "moment";
 
 import "./styles/page.scss";
@@ -54,7 +54,7 @@ class PageClass extends Component {
                 <div className="header">
                     <img src={this.state.page.logoUrl} alt="Logo" />
                     <div className="links">
-                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineNodes}/{this.state.page.totalNodes})</a>
+                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineServices}/{this.state.page.totalServices})</a>
                         {params.has("back") ? <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link> : null}
                     </div>
                 </div>
@@ -63,8 +63,8 @@ class PageClass extends Component {
                     {this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} back={back} />)}
                 </div> : null}
 
-                {this.state.page.nodes.length > 0 ? <div className="nodes">
-                    {this.state.page.nodes.sort((a, b) => a.position - b.position).map((node) => <Node key={node.id} node={node} page={this.state.page} back={back} />)}
+                {this.state.page.services.length > 0 ? <div className="services">
+                    {this.state.page.services.sort((a, b) => a.position - b.position).map((service) => <Service key={service.id} service={service} page={this.state.page} back={back} />)}
                 </div> : null}
 
             </> : null}
@@ -77,12 +77,12 @@ class SubPage extends Component {
     render() {
         return <Link to={"/" + this.props.subPage.shortName + this.props.back} className="subPage link-container">
             <img src={this.props.subPage.logoUrl} alt="Logo" />
-            <span className="link">{this.props.subPage.title} ({this.props.subPage.onlineNodes}/{this.props.subPage.totalNodes})</span>
+            <span className="link">{this.props.subPage.title} ({this.props.subPage.onlineServices}/{this.props.subPage.totalServices})</span>
         </Link>;
     }
 }
 
-class Node extends Component {
+class Service extends Component {
 
     constructor(props) {
 
@@ -96,7 +96,7 @@ class Node extends Component {
         const since = Date.UTC(new Date().getFullYear(), new Date().getMonth() - 3, new Date().getDate());
 
         this.setState({ requesting: true });
-        getNodeUptime(this.props.node.id, since, "days").then((days) => {
+        getServiceUptimes(this.props.service.id, since, "days").then((days) => {
             this.setState({ requesting: false, days });
         }).catch(() => {
             this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
@@ -118,10 +118,10 @@ class Node extends Component {
 
         const averageUptime = this.state.days && this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length > 0 ? Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
 
-        return <div className="node">
-            <Link to={"/" + this.props.page.shortName + "/" + this.props.node.id + this.props.back} className="title link-container">
-                <span className="link">{this.props.node.displayName || this.props.node.name}</span>
-                <span>{this.props.node.disabled ? "Désactivé" : (this.props.node.online ? "En ligne" : "En panne")}</span>
+        return <div className="service">
+            <Link to={"/" + this.props.page.shortName + "/" + this.props.service.id + this.props.back} className="title link-container">
+                <span className="link">{this.props.service.displayName || this.props.service.name}</span>
+                <span>{this.props.service.disabled ? "Désactivé" : (this.props.service.online ? "En ligne" : "En panne")}</span>
             </Link>
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}

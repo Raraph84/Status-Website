@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Info, Loading } from "./other";
-import { getPage, getNode, getNodeUptime, getNodeResponseTimes } from "./api";
+import { getPage, getService, getServiceUptimes, getServiceResponseTimes } from "./api";
 import moment from "moment";
 
 import "./styles/node.scss";
@@ -13,28 +13,28 @@ class NodeClass extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, page: null, node: null, uptimes: null, responseTimes: null, displayedDays: 90 };
+        this.state = { requesting: false, info: null, page: null, service: null, uptimes: null, responseTimes: null, displayedDays: 90 };
     }
 
     componentDidMount() {
 
         const since = Date.UTC(new Date().getFullYear(), new Date().getMonth() - 3, new Date().getDate());
 
-        this.setState({ requesting: true, info: null, page: null, node: null, uptimes: null });
+        this.setState({ requesting: true, info: null, page: null, service: null, uptimes: null });
         getPage(this.props.params.pageShortName).then((page) => {
-            getNode(this.props.params.nodeId).then((node) => {
-                getNodeUptime(node.id, since, "days").then((uptimes) => {
-                    getNodeResponseTimes(node.id, since, "days").then((responseTimes) => {
-                        this.setState({ requesting: false, page, node, uptimes, responseTimes });
+            getService(this.props.params.serviceId).then((service) => {
+                getServiceUptimes(service.id, since, "days").then((uptimes) => {
+                    getServiceResponseTimes(service.id, since, "days").then((responseTimes) => {
+                        this.setState({ requesting: false, page, service, uptimes, responseTimes });
                     }).catch(() => {
                         this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
                     });
-                    this.setState({ requesting: false, page, node, uptimes });
+                    this.setState({ requesting: false, page, service, uptimes });
                 }).catch(() => {
                     this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
                 });
             }).catch((error) => {
-                if (error === "This node does not exist")
+                if (error === "This service does not exist")
                     this.setState({ requesting: false, info: <Info>Ce nœud n'existe pas !</Info> });
                 else this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
             });
@@ -63,7 +63,7 @@ class NodeClass extends Component {
     render() {
 
         if (this.state.page) {
-            document.title = "Statut - " + this.state.node.name;
+            document.title = "Statut - " + this.state.service.name;
             document.getElementById("favicon").href = this.state.page.logoUrl;
         }
 
@@ -72,25 +72,25 @@ class NodeClass extends Component {
         const averageUptime = this.state.uptimes && this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length > 0 ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
         const averageResponseTime = this.state.responseTimes && this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length > 0 ? Math.round(this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).reduce((acc, day) => acc + day.responseTime, 0) / this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length * 100) / 100 : -1;
 
-        return <div className="node">
+        return <div className="service">
 
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            {this.state.page && this.state.node && this.state.uptimes && this.state.responseTimes ? <>
+            {this.state.page && this.state.service && this.state.uptimes && this.state.responseTimes ? <>
 
                 <div className="header">
                     <img src={this.state.page.logoUrl} alt="Logo" />
                     <div className="links">
-                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineNodes}/{this.state.page.totalNodes})</a>
+                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineServices}/{this.state.page.totalServices})</a>
                         {params.has("back") ? <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link> : null}
                     </div>
                 </div>
 
                 <div className="infos">
                     <div className="title">
-                        <span>{this.state.page.nodes.find((node) => node.id === this.state.node.id)?.displayName || this.state.node.name}</span>
-                        <span>{this.state.node.disabled ? "Désactivé" : (this.state.node.online ? "En ligne" : "En panne")}</span>
+                        <span>{this.state.page.services.find((service) => service.id === this.state.service.id)?.displayName || this.state.service.name}</span>
+                        <span>{this.state.service.disabled ? "Désactivé" : (this.state.service.online ? "En ligne" : "En panne")}</span>
                     </div>
                     {averageUptime >= 0 ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>

@@ -17,7 +17,7 @@ class Website extends Component {
             <Routes>
                 <Route path="/" element={<Page />} />
                 <Route path="/:pageShortName" element={<Page />} />
-                <Route path="/:pageShortName/:nodeId" element={<Node />} />
+                <Route path="/:pageShortName/:serviceId" element={<Node />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>;
