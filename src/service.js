@@ -5,9 +5,9 @@ import { Info, Loading } from "./other";
 import { getPage, getService, getServiceUptimes, getServiceResponseTimes } from "./api";
 import moment from "moment";
 
-import "./styles/node.scss";
+import "./styles/service.scss";
 
-class NodeClass extends Component {
+class ServiceClass extends Component {
 
     constructor(props) {
 
@@ -168,4 +168,4 @@ class NodeClass extends Component {
 }
 
 // eslint-disable-next-line
-export default (props) => <NodeClass {...props} params={useParams()} location={useLocation()} />;
+export default (props) => <ServiceClass {...props} params={useParams()} location={useLocation()} />;
