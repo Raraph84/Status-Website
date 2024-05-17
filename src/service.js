@@ -96,7 +96,7 @@ class ServiceClass extends Component {
                     </div>
                     {averageUptime !== null ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
-                        <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
+                        <div key={day.day} style={{ backgroundColor: day.uptime === null ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
                                 <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
                                 {day.uptime !== null ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
@@ -111,7 +111,7 @@ class ServiceClass extends Component {
                         labels: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
                         datasets: [{
                             label: "Temps de réponse",
-                            data: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => responseTime.responseTime < 0 ? null : responseTime.responseTime),
+                            data: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => responseTime.responseTime === null ? null : responseTime.responseTime),
                             borderColor: "rgb(0, 175, 0)",
                             backgroundColor: "rgba(0, 175, 0, 0.5)",
                             borderWidth: 1,
