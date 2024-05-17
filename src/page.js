@@ -116,7 +116,8 @@ class Service extends Component {
 
     render() {
 
-        const averageUptime = this.state.days && this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length > 0 ? Math.round(this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
+        const uptimeDays = this.state.days ? this.state.days.slice(-this.state.displayedDays).filter((day) => day.uptime !== null) : null;
+        const averageUptime = this.state.days && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 100) / 100 : null;
 
         return <div className="service">
             <Link to={"/" + this.props.page.shortName + "/" + this.props.service.id + this.props.back} className="title link-container">
@@ -126,12 +127,12 @@ class Service extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
             {this.state.days ? <>
-                {averageUptime >= 0 ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
+                {averageUptime !== null ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                 <div className="uptime">{this.state.days.slice(-this.state.displayedDays).map((day) =>
                     <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                            {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
+                            {day.uptime !== null ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
                         </div>
                     </div>
                 )}</div>

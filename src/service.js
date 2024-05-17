@@ -69,8 +69,10 @@ class ServiceClass extends Component {
 
         const params = new URLSearchParams(this.props.location.search);
 
-        const averageUptime = this.state.uptimes && this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length > 0 ? Math.round(this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).reduce((acc, uptime) => acc + uptime.uptime, 0) / this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime >= 0).length * 100) / 100 : -1;
-        const averageResponseTime = this.state.responseTimes && this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length > 0 ? Math.round(this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).reduce((acc, day) => acc + day.responseTime, 0) / this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime >= 0).length * 100) / 100 : -1;
+        const uptimeDays = this.state.uptimes ? this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime !== null) : null;
+        const averageUptime = this.state.uptimes && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 100) / 100 : null;
+        const responseTimeDays = this.state.responseTimes ? this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime !== null) : null;
+        const averageResponseTime = this.state.responseTimes && responseTimeDays.length > 0 ? Math.round(responseTimeDays.reduce((acc, day) => acc + day.responseTime, 0) / responseTimeDays.length * 100) / 100 : null;
 
         return <div className="service">
 
@@ -92,19 +94,19 @@ class ServiceClass extends Component {
                         <span>{this.state.page.services.find((service) => service.id === this.state.service.id)?.displayName || this.state.service.name}</span>
                         <span>{this.state.service.disabled ? "Désactivé" : (this.state.service.online ? "En ligne" : "En panne")}</span>
                     </div>
-                    {averageUptime >= 0 ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
+                    {averageUptime !== null ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
                         <div key={day.day} style={{ backgroundColor: day.uptime < 0 ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
                                 <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                                {day.uptime >= 0 ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
+                                {day.uptime !== null ? <div>En ligne à {day.uptime}%</div> : <div>Aucune données</div>}
                             </div>
                         </div>
                     )}</div>
                 </div>
 
                 <div className="responseTime">
-                    {averageResponseTime >= 0 ? <div>Temps de réponse de {averageResponseTime}ms ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données de temps de réponse ces {this.state.displayedDays} derniers jours :</div>}
+                    {averageResponseTime !== null ? <div>Temps de réponse de {averageResponseTime}ms ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données de temps de réponse ces {this.state.displayedDays} derniers jours :</div>}
                     <Line data={{
                         labels: this.state.responseTimes.slice(-this.state.displayedDays).map((responseTime) => moment(responseTime.day * 24 * 60 * 60 * 1000).format("DD/MM")),
                         datasets: [{
