@@ -35,7 +35,7 @@ class ServiceClass extends Component {
                 });
             }).catch((error) => {
                 if (error === "This service does not exist")
-                    this.setState({ requesting: false, info: <Info>Ce nœud n'existe pas !</Info> });
+                    this.setState({ requesting: false, info: <Info>Ce service n'existe pas !</Info> });
                 else this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
             });
         }).catch((error) => {
