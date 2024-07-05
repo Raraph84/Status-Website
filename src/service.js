@@ -70,7 +70,7 @@ class ServiceClass extends Component {
         const params = new URLSearchParams(this.props.location.search);
 
         const uptimeDays = this.state.uptimes ? this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime !== null) : null;
-        const averageUptime = this.state.uptimes && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 100) / 100 : null;
+        const averageUptime = this.state.uptimes && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 1000) / 1000 : null;
         const responseTimeDays = this.state.responseTimes ? this.state.responseTimes.slice(-this.state.displayedDays).filter((day) => day.responseTime !== null) : null;
         const averageResponseTime = this.state.responseTimes && responseTimeDays.length > 0 ? Math.round(responseTimeDays.reduce((acc, day) => acc + day.responseTime, 0) / responseTimeDays.length * 100) / 100 : null;
 
@@ -94,7 +94,7 @@ class ServiceClass extends Component {
                         <span>{this.state.page.services.find((service) => service.id === this.state.service.id)?.displayName || this.state.service.name}</span>
                         <span>{this.state.service.disabled ? "Désactivé" : (this.state.service.online ? "En ligne" : "En panne")}</span>
                     </div>
-                    {averageUptime !== null ? <div>En ligne à {averageUptime}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
+                    {averageUptime !== null ? <div>En ligne à {averageUptime.toFixed(3)}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
                     <div className="uptime">{this.state.uptimes.slice(-this.state.displayedDays).map((day) =>
                         <div key={day.day} style={{ backgroundColor: day.uptime === null ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                             <div className="tooltip">
