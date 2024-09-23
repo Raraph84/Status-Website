@@ -1,7 +1,8 @@
 import { Component } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { Info, Loading } from "./other";
-import { getServiceUptimes, getPage } from "./api";
+import { getPage, getServiceUptimes } from "./api";
+import { countServices } from "./utils";
 import moment from "moment";
 
 import "./styles/page.scss";
@@ -18,7 +19,7 @@ class PageClass extends Component {
     componentDidMount() {
 
         this.setState({ requesting: true, info: null, page: null });
-        getPage(this.props.params.pageShortName || window.location.hostname).then((page) => {
+        getPage(this.props.params.pageShortName || window.location.hostname, ["subpages", "subpages.subpage", "services", "services.service", "services.service.online"]).then((page) => {
             this.setState({ requesting: false, page });
         }).catch((error) => {
             if (error === "This page does not exist")
@@ -33,10 +34,8 @@ class PageClass extends Component {
 
     render() {
 
-        if (this.state.page) {
-            document.title = "Statut - " + this.state.page.title;
-            document.getElementById("favicon").href = this.state.page.logoUrl;
-        }
+        document.title = "Statut" + (this.state.page ? ` - ${this.state.page.title}` : "");
+        if (this.state.page) document.getElementById("favicon").href = this.state.page.logoUrl;
 
         const backParams = new URLSearchParams();
         backParams.set("back", this.props.location.pathname + this.props.location.search);
@@ -44,30 +43,32 @@ class PageClass extends Component {
 
         const params = new URLSearchParams(this.props.location.search);
 
+        const services = this.state.page ? countServices(this.state.page) : null;
+
         return <div className="page">
 
-            {this.state.requesting ? <Loading /> : null}
+            {this.state.requesting && <Loading />}
             {this.state.info}
 
-            {this.state.page ? <>
+            {this.state.page && <>
 
                 <div className="header">
                     <img src={this.state.page.logoUrl} alt="Logo" />
                     <div className="links">
-                        <a href={this.state.page.url} className="link">{this.state.page.title} ({this.state.page.onlineServices}/{this.state.page.totalServices})</a>
-                        {params.has("back") ? <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link> : null}
+                        <a href={this.state.page.url} className="link">{this.state.page.title} ({services.online}/{services.total})</a>
+                        {params.has("back") && <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>}
                     </div>
                 </div>
 
-                {this.state.page.subPages.length > 0 ? <div className="subPages">
-                    {this.state.page.subPages.map((subPage) => <SubPage key={subPage.shortName} subPage={subPage} back={back} />)}
-                </div> : null}
+                {this.state.page.subPages.length > 0 && <div className="subPages">
+                    {this.state.page.subPages.map((subPage) => <SubPage key={subPage.subPage.shortName} subPage={subPage} back={back} />)}
+                </div>}
 
-                {this.state.page.services.length > 0 ? <div className="services">
-                    {this.state.page.services.sort((a, b) => a.position - b.position).map((service) => <Service key={service.id} service={service} page={this.state.page} back={back} />)}
-                </div> : null}
+                {this.state.page.services.length > 0 && <div className="services">
+                    {this.state.page.services.sort((a, b) => a.position - b.position).map((service) => <Service key={service.service.id} service={service} page={this.state.page} back={back} />)}
+                </div>}
 
-            </> : null}
+            </>}
 
         </div>;
     }
@@ -75,9 +76,10 @@ class PageClass extends Component {
 
 class SubPage extends Component {
     render() {
-        return <Link to={"/" + this.props.subPage.shortName + this.props.back} className="subPage link-container">
-            <img src={this.props.subPage.logoUrl} alt="Logo" />
-            <span className="link">{this.props.subPage.title} ({this.props.subPage.onlineServices}/{this.props.subPage.totalServices})</span>
+        const services = this.props.subPage ? countServices(this.props.subPage.subPage) : null;
+        return <Link to={"/" + this.props.subPage.subPage.shortName + this.props.back} className="subPage link-container">
+            <img src={this.props.subPage.subPage.logoUrl} alt="Logo" />
+            <span className="link">{this.props.subPage.subPage.title} ({services.online}/{services.total})</span>
         </Link>;
     }
 }
@@ -96,7 +98,7 @@ class Service extends Component {
         const since = Date.UTC(new Date().getFullYear(), new Date().getMonth() - 3, new Date().getDate());
 
         this.setState({ requesting: true });
-        getServiceUptimes(this.props.service.id, since, "days").then((days) => {
+        getServiceUptimes(this.props.service.service.id, since, "days").then((days) => {
             this.setState({ requesting: false, days });
         }).catch(() => {
             this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
@@ -120,14 +122,19 @@ class Service extends Component {
         const averageUptime = this.state.days && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 1000) / 1000 : null;
 
         return <div className="service">
-            <Link to={"/" + this.props.page.shortName + "/" + this.props.service.id + this.props.back} className="title link-container">
-                <span className="link">{this.props.service.displayName || this.props.service.name}</span>
-                <span>{this.props.service.disabled ? "Désactivé" : (this.props.service.online ? "En ligne" : "En panne")}</span>
+
+            <Link to={"/" + this.props.page.shortName + "/" + this.props.service.service.id + this.props.back} className="title link-container">
+                <span className="link">{this.props.service.displayName || this.props.service.service.name}</span>
+                <span>{this.props.service.service.disabled ? "Désactivé" : (this.props.service.service.online ? "En ligne" : "En panne")}</span>
             </Link>
-            {this.state.requesting ? <Loading /> : null}
+
+            {this.state.requesting && <Loading />}
             {this.state.info}
-            {this.state.days ? <>
+
+            {this.state.days && <>
+
                 {averageUptime !== null ? <div>En ligne à {averageUptime.toFixed(3)}% ces {this.state.displayedDays} derniers jours :</div> : <div>Aucune données ces {this.state.displayedDays} derniers jours :</div>}
+
                 <div className="uptime">{this.state.days.slice(-this.state.displayedDays).map((day) =>
                     <div key={day.day} style={{ backgroundColor: day.uptime === null ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
@@ -136,7 +143,8 @@ class Service extends Component {
                         </div>
                     </div>
                 )}</div>
-            </> : null}
+
+            </>}
         </div>;
     }
 }
