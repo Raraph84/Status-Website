@@ -74,7 +74,7 @@ class ServiceClass extends Component {
 
     render() {
 
-        const pageService = this.state.page?.services.find((service) => service.service === this.state.service?.id);
+        const pageService = this.state.page?.services.find((service) => service.service.id === this.state.service?.id);
 
         document.title = "Statut" + (this.state.page && this.state.service ? ` - ${pageService?.displayName ?? this.state.service.name} - ${this.state.page.title}` : "");
         if (this.state.service) document.getElementById("favicon").href = this.state.page.logoUrl;
