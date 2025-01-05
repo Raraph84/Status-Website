@@ -97,7 +97,7 @@ class ServiceClass extends Component {
                 <img src={this.state.page.logoUrl} alt="Logo" />
                 <div className="links">
                     <a href={this.state.page.url} className="link">{this.state.page.title} ({services.online}/{services.total})</a>
-                    {params.has("back") && <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>}
+                    <Link to={params.get("back") ?? "/" + this.state.page?.shortName} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>
                 </div>
             </div>}
 
