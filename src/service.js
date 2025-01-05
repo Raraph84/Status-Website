@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Line } from "react-chartjs-2";
 import { Info, Loading } from "./other";
 import { getPage, getService, getServiceUptimes, getServiceResponseTimes } from "./api";
@@ -75,13 +76,9 @@ class ServiceClass extends Component {
     render() {
 
         const pageService = this.state.page?.services.find((service) => service.service.id === this.state.service?.id);
-
-        document.title = "Statut" + (this.state.page && this.state.service ? ` - ${pageService?.displayName ?? this.state.service.name} - ${this.state.page.title}` : "");
-        if (this.state.service) document.getElementById("favicon").href = this.state.page.logoUrl;
+        const services = this.state.page ? countServices(this.state.page) : null;
 
         const params = new URLSearchParams(this.props.location.search);
-
-        const services = this.state.page ? countServices(this.state.page) : null;
 
         const uptimeDays = this.state.uptimes ? this.state.uptimes.slice(-this.state.displayedDays).filter((day) => day.uptime !== null) : null;
         const averageUptime = this.state.uptimes && uptimeDays.length > 0 ? Math.round(uptimeDays.reduce((acc, uptime) => acc + uptime.uptime, 0) / uptimeDays.length * 1000) / 1000 : null;
@@ -90,8 +87,11 @@ class ServiceClass extends Component {
 
         return <div className="service">
 
-            {this.state.requesting && <Loading />}
-            {this.state.info}
+            {this.state.page && <Helmet>
+                <title>{this.state.service ? `${pageService?.displayName ?? this.state.service.name} - ` : ""}{this.state.page.title} - Statut</title>
+                <link rel="icon" href={this.state.page.logoUrl} />
+                <link rel="canonical" href={window.location.origin + window.location.pathname} />
+            </Helmet>}
 
             {this.state.page && <div className="header">
                 <img src={this.state.page.logoUrl} alt="Logo" />
@@ -100,6 +100,9 @@ class ServiceClass extends Component {
                     {params.has("back") && <Link to={params.get("back")} className="link back"><i className="fa-solid fa-arrow-left" />Retour</Link>}
                 </div>
             </div>}
+
+            {this.state.requesting && <Loading />}
+            {this.state.info}
 
             {this.state.service && <div className="infos">
 

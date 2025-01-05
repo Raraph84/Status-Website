@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from "chart.js";
 
 import Page from "./page";
@@ -13,14 +14,16 @@ Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, L
 
 class Website extends Component {
     render() {
-        return <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Page />} />
-                <Route path="/:pageShortName" element={<Page />} />
-                <Route path="/:pageShortName/:serviceId" element={<Service />} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
-        </BrowserRouter>;
+        return <HelmetProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Page />} />
+                    <Route path="/:pageShortName" element={<Page />} />
+                    <Route path="/:pageShortName/:serviceId" element={<Service />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </BrowserRouter>
+        </HelmetProvider>;
     }
 }
 

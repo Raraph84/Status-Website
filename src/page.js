@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Info, Loading } from "./other";
 import { getPage, getServiceUptimes } from "./api";
 import { countServices } from "./utils";
@@ -34,9 +35,6 @@ class PageClass extends Component {
 
     render() {
 
-        document.title = "Statut" + (this.state.page ? ` - ${this.state.page.title}` : "");
-        if (this.state.page) document.getElementById("favicon").href = this.state.page.logoUrl;
-
         const backParams = new URLSearchParams();
         backParams.set("back", this.props.location.pathname + this.props.location.search);
         const back = "?" + backParams.toString();
@@ -46,6 +44,11 @@ class PageClass extends Component {
         const services = this.state.page ? countServices(this.state.page) : null;
 
         return <div className="page">
+
+            {this.state.page && <Helmet>
+                <title>{this.state.page.title} - Statut</title>
+                <link rel="icon" href={this.state.page.logoUrl} />
+            </Helmet>}
 
             {this.state.requesting && <Loading />}
             {this.state.info}
