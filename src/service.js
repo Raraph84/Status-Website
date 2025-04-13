@@ -26,6 +26,10 @@ class ServiceClass extends Component {
         getPage(this.props.params.pageShortName, ["subpages", "subpages.subpage", "services", "services.service", "services.service.online"]).then((page) => {
 
             this.setState({ page });
+            if (!page.services.some((service) => service.service.id.toString() === this.props.params.serviceId)) {
+                this.setState({ requesting: false, info: <Info>Ce service n'existe pas !</Info> });
+                return;
+            }
 
             getService(this.props.params.serviceId, ["online"]).then((service) => {
 
