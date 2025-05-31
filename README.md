@@ -8,6 +8,8 @@ It is composed of 4 parts:
 - Checker (NodeJS app checking its assigned services): https://github.com/Raraph84/Status-Checker
 - Panel (ReactJS app for managing the system): https://github.com/Raraph84/Status-Admin-Panel-Website
 
+![Screenshot 2025-05-31 at 20-49-02 Eclipsia - Statut](https://github.com/user-attachments/assets/39db14d7-1910-46bb-8d60-0f72cff66822)
+
 ## How it works?
 
 The app is composed of 4 resources:
@@ -62,6 +64,8 @@ If the service does not reply to the 5 pings, then it will be considered as down
 
 A Grafana dashboard can be configured by importing grafana.json file to visualize the smokeping data  
 A MySQL data source is required an you may have to change the data source of the dashboard variables and the panel to match your source
+
+![Screenshot 2025-05-31 at 20-48-01 View panel - Smokeping - Dashboards - Grafana](https://github.com/user-attachments/assets/823b99f6-efbc-42cd-a374-1198ba051e4a)
 
 ## Setup
 
