@@ -23,16 +23,15 @@ The services have the current options:
   - Website (HTTP(S), must reply with 200 response code)
   - API (HTTP(S), must reply with a valid JSON response)
   - Gateway (WS(S), must be a valid websocket server and must close the connection with a non JSON valid message)
-  - Bot (Must be an HTTP(S) endpoint returing an `{ online: boolean; }` JSON response, can be used to monitor a non-exposed app)
   - Minecraft (Minecraft protocol, must reply to a server list ping)
   - Server (ICMP, must reply to at least 1/5 ICMP ping, complete other behavior of other types, see under)
 - Name: The actual name of the checker
 - Host: The host of the service:
-  - An HTTP(S) url for the Website, API or Bot type
+  - An HTTP(S) url for the Website or API type
   - An WS(S) url for the Gateway type
   - The host of the Minecraft server with or without port for the Minecraft type
   - The FQDN or adirect IPv4/6 for the server type
-- Protocol: Only used for server type:
+- Protocol: Only used for website, api and server type:
   - 4 to force IPv4
   - 6 to force IPv6
   - 0 to to use IPv6 with fallback to IPv4 if FQDN does not resolve IPv6
@@ -93,6 +92,8 @@ Then serve the static website built in `Status-Website/build/` with any webserve
 ## TODO
 
 - Use the smokeping system for every types of services and delete the old system
+- Do not resolve hostnames for Gateway and Minecraft since it is already resolved by services.js in Checker
+- Add a DNS timeout in services.js in the Checker to avoid consider a service up if the host name is not working anymore
 - Add a setting on the public website for choosing checker source
 - Ability to create/delete/edit everything on the panel
 - Better authentication on the panel
