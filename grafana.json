@@ -222,7 +222,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "WITH RECURSIVE dates AS (\r\n  SELECT\r\n    FLOOR($__unixEpochFrom() * 1000 / $__interval_ms) * $__interval_ms AS date\r\n  UNION\r\n  ALL\r\n  SELECT\r\n    date + $__interval_ms\r\n  FROM\r\n    dates\r\n  WHERE\r\n    date + $__interval_ms < $__unixEpochTo() * 1000\r\n)\r\nSELECT\r\n  dates.date AS time_sec,\r\n  Med,\r\n  Min,\r\n  Max,\r\n  Loss\r\nFROM\r\n  dates\r\n  LEFT JOIN (\r\n    SELECT\r\n      ROUND(start_time * 10 / ($__interval_ms / 1000)) * ($__interval_ms / 1000) AS date,\r\n      AVG(med_response_time) / 100 AS \"Med\",\r\n      AVG(min_response_time) / 100 AS \"Min\",\r\n      AVG(max_response_time) / 100 AS \"Max\",\r\n      SUM(COALESCE(lost, 0)) / SUM(sent) * 100 AS \"Loss\"\r\n    FROM\r\n      services_smokeping\r\n    WHERE\r\n      checker_id = $checker_id\r\n      AND service_id = $service_id\r\n      AND $__unixEpochFilter(start_time * 10)\r\n    GROUP BY\r\n      date\r\n    ORDER BY\r\n      date ASC\r\n  ) AS vals ON dates.date = vals.date * 1000",
+                    "rawSql": "WITH RECURSIVE dates AS (\r\n  SELECT\r\n    FLOOR($__unixEpochFrom() * 1000 / $__interval_ms) * $__interval_ms AS date\r\n  UNION\r\n  ALL\r\n  SELECT\r\n    date + $__interval_ms\r\n  FROM\r\n    dates\r\n  WHERE\r\n    date + $__interval_ms < $__unixEpochTo() * 1000\r\n)\r\nSELECT\r\n  dates.date AS time_sec,\r\n  Med,\r\n  Min,\r\n  Max,\r\n  Loss\r\nFROM\r\n  dates\r\n  LEFT JOIN (\r\n    SELECT\r\n      ROUND(start_time * 10 / ($__interval_ms / 1000)) * ($__interval_ms / 1000) AS date,\r\n      AVG(med_response_time) / 100 AS \"Med\",\r\n      AVG(min_response_time) / 100 AS \"Min\",\r\n      AVG(max_response_time) / 100 AS \"Max\",\r\n      SUM(COALESCE(lost, 0)) / SUM(checks * 5) * 100 AS \"Loss\"\r\n    FROM\r\n      services_smokeping\r\n    WHERE\r\n      checker_id = $checker_id\r\n      AND service_id = $service_id\r\n      AND $__unixEpochFilter(start_time * 10)\r\n    GROUP BY\r\n      date\r\n    ORDER BY\r\n      date ASC\r\n  ) AS vals ON dates.date = vals.date * 1000",
                     "refId": "A",
                     "sql": {
                         "columns": [
@@ -393,6 +393,6 @@
     },
     "timezone": "browser",
     "title": "Smokeping",
-    "version": 48,
+    "version": 64,
     "weekStart": ""
 }
