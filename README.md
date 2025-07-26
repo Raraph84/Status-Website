@@ -15,9 +15,9 @@ It is composed of 4 parts:
 The app is composed of 4 resources:
 
 - Services: The actual services that will be checked by the checker if assigned
-- Checkers: The servers that are checking its assigned services (cannot be created/edited/removed on the panel at the moment, use the database)
-- Pages: The pages that can be viewed with the website
-- Groups: Some groups of services that can be assigned to checkers for them to check (cannot be created/edit/removed on the panel at the moment except assigned/unassigning services, use the database)
+- Checkers: The servers that are checking their assigned services
+- Pages: The pages that can be viewed from the website
+- Groups: Groups of services that can be assigned to checkers
 
 The services have the current options:
 
