@@ -70,9 +70,9 @@ A MySQL data source is required an you may have to change the data source of the
 
 ### Prerequisites
 
-- Have already setup the API
+- The API set up
 - Git installed to clone the repo
-- NodeJS installed to build
+- NodeJS installed to build the website
 
 ### Building
 
