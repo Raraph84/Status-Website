@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Line } from "react-chartjs-2";
 import { Info, Loading } from "./other";
 import { getPage, getService, getServiceUptimes, getServiceResponseTimes } from "./api";
-import { countServices } from "./utils";
+import { countServices, formatDuration } from "./utils";
 import moment from "moment";
 
 import "./styles/service.scss";
@@ -121,7 +121,9 @@ class ServiceClass extends Component {
                     <div key={day.day} style={{ backgroundColor: day.uptime === null ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                            {day.uptime !== null ? <div>En ligne à {day.uptime.toFixed(3)}%</div> : <div>Aucune données</div>}
+                            {day.uptime !== null
+                                ? <div>En ligne à {day.uptime.toFixed(3)}%{day.downtime > 0 && <><br />Hors ligne pendant {formatDuration(day.downtime)}</>}</div>
+                                : <div>Aucune données</div>}
                         </div>
                     </div>
                 )}</div>}

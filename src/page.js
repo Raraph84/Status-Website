@@ -3,7 +3,7 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Info, Loading } from "./other";
 import { getPage, getServiceUptimes } from "./api";
-import { countServices } from "./utils";
+import { countServices, formatDuration } from "./utils";
 import moment from "moment";
 
 import "./styles/page.scss";
@@ -142,7 +142,9 @@ class Service extends Component {
                     <div key={day.day} style={{ backgroundColor: day.uptime === null ? "gray" : (day.uptime < 95 ? "red" : (day.uptime < 100 ? "orange" : "green")) }} className="day">
                         <div className="tooltip">
                             <div>{moment(day.day * 24 * 60 * 60 * 1000).format("DD/MM/YYYY")}</div>
-                            {day.uptime !== null ? <div>En ligne à {day.uptime.toFixed(3)}%</div> : <div>Aucune données</div>}
+                            {day.uptime !== null
+                                ? <div>En ligne à {day.uptime.toFixed(3)}%{day.downtime > 0 && <><br />Hors ligne pendant {formatDuration(day.downtime)}</>}</div>
+                                : <div>Aucune données</div>}
                         </div>
                     </div>
                 )}</div>
